@@ -1,0 +1,6 @@
+domain.com:
+  - https://domain.com/channel1/
+  - https://domain.com/channel2/
+
+cronjob:
+  crontab: "0 */5 * * *"
