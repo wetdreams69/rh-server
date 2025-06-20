@@ -81,7 +81,11 @@ def status():
         "scraping": scraping_status
     }
 
-@app.get("/metadata")
+@app.get("/assets")
+def list_assets():
+    return {"files": os.listdir("assets") if os.path.exists("assets") else []}
+
+@app.get("/assets/metadata")
 def metadata():
     try:
         config = load_configuration()
@@ -102,7 +106,7 @@ def metadata():
                     name = path_parts[-1] if path_parts else "channel"
                 
                 name = name.replace(":", "").replace(".", "_")
-                endpoint = generate_endpoint(domain, url)
+                endpoint = f"{generate_endpoint(domain, url)}.m3u8"
                 
                 channels.append({
                     "channel": name,
@@ -133,7 +137,7 @@ async def execute_background_scraping():
     finally:
         scraping_status["running"] = False
 
-@app.post("/refresh")
+@app.post("/assets/refresh")
 async def refresh():
     global scraping_status
     
@@ -151,14 +155,14 @@ async def refresh():
         
         return Response(
             content='{"status": "processing", "message": "Scraping started in background"}',
-            status_code=201,
+            status_code=202,
             media_type="application/json"
         )
     except Exception as e:
         logger.error(f"Error starting refresh: {e}")
         return Response(f'{{"error": "{str(e)}"}}', status_code=500, media_type="application/json")
 
-@app.get("/{file}")
+@app.get("/assets/{file}.m3u8")
 def get_file(file: str):
     file_path = f"assets/{file}.m3u8"
     if os.path.exists(file_path):
