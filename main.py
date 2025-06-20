@@ -8,7 +8,7 @@ from config import (
     ensure_assets_directory,
     load_configuration,
 )
-from utils import start_cron_scraping
+from utils import (start_cron_scraping, generate_endpoint)
 from scraper import scrape_all_files
 
 logging.basicConfig(level=logging.INFO)
@@ -102,7 +102,7 @@ def metadata():
                     name = path_parts[-1] if path_parts else "channel"
                 
                 name = name.replace(":", "").replace(".", "_")
-                endpoint = f"{domain.replace('.', '_')}-{name}"
+                endpoint = generate_endpoint(domain, url)
                 
                 channels.append({
                     "channel": name,

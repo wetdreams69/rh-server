@@ -6,6 +6,13 @@ from scraper import scrape_all_files
 
 logger = logging.getLogger(__name__)
 
+def generate_endpoint(domain, url):
+    name = url.replace("https://", "").replace("http://", "")
+    name = name.replace("/", "-").replace(".", "_")
+    if name.endswith("-"):
+        name = name[:-1]
+    return f"{name}"
+
 def run_async_job():
     try:
         loop = asyncio.new_event_loop()
